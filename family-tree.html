@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>شجرة العائلة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe6;
+    --paper-2:#efe8db;
+    --ink:#2b2620;
+    --ink-soft:#6f665a;
+    --line:#cdbf9f;
+    --gold:#c19a3f;
+    --male:#3e7d52;
+    --male-soft:#e4efe5;
+    --female:#b56a72;
+    --female-soft:#f6e8e9;
+    --card:#fffdf8;
+    --shadow:0 6px 20px rgba(60,48,30,.12);
+    --shadow-lg:0 18px 50px rgba(60,48,30,.22);
+    --radius:14px;
+    --font-display:'El Messiri',serif;
+    --font-body:'Tajawal',sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:var(--font-body);color:var(--ink);
+    background:
+      radial-gradient(1100px 720px at 50% -12%, rgba(193,154,63,.07), transparent 62%),
+      radial-gradient(820px 600px at 100% 105%, rgba(122,90,44,.05), transparent 60%),
+      linear-gradient(180deg,#f7f2ea,#ece4d6);
+    overflow:hidden;
+  }
+
+  /* ---------- Top bar ---------- */
+  header{
+    position:fixed;top:0;right:0;left:0;height:62px;z-index:40;
+    display:flex;align-items:center;gap:14px;padding:0 18px;
+    background:rgba(244,239,230,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(205,191,159,.6);
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;}
+  .crest{
+    width:34px;height:34px;border-radius:10px;flex:none;
+    background:linear-gradient(145deg,var(--gold),#9a7434);
+    display:grid;place-items:center;color:#fff;box-shadow:var(--shadow);
+    text-decoration:none;transition:transform .15s, box-shadow .15s;
+  }
+  a.crest:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(120,90,40,.35);}
+  .crest svg{width:20px;height:20px;}
+  #title{
+    font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--ink);
+    border:none;background:transparent;outline:none;min-width:60px;max-width:46vw;
+    padding:4px 6px;border-radius:8px;
+  }
+  #title:focus{background:#fff;box-shadow:inset 0 0 0 1px var(--line);}
+  .brandtxt{display:flex;flex-direction:column;min-width:0;}
+  .brandsub{font-size:11px;color:var(--gold-d,#a07f2c);font-weight:700;letter-spacing:.3px;padding:0 6px;margin-top:-2px;white-space:nowrap;}
+  .spacer{flex:1;}
+  .searchwrap{position:relative;}
+  #search{
+    width:200px;max-width:38vw;font-family:var(--font-body);font-size:14px;color:var(--ink);
+    padding:9px 34px 9px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;outline:none;
+  }
+  #search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(193,154,63,.15);}
+  .searchwrap svg{position:absolute;top:50%;right:11px;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-soft);pointer-events:none;}
+  .sresults{
+    position:absolute;top:46px;right:0;left:0;background:#fff;border:1px solid var(--line);
+    border-radius:12px;box-shadow:var(--shadow-lg);overflow:hidden;display:none;z-index:50;max-height:260px;overflow-y:auto;
+  }
+  .sresults.open{display:block;}
+  .sresults button{
+    display:block;width:100%;text-align:right;padding:10px 14px;background:#fff;border:none;
+    font-family:var(--font-body);font-size:14px;color:var(--ink);cursor:pointer;border-bottom:1px solid #f0eadd;
+  }
+  .sresults button:hover{background:var(--paper-2);}
+  .iconbtn{
+    width:38px;height:38px;flex:none;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:.15s;
+  }
+  .iconbtn:hover{background:var(--paper-2);border-color:var(--gold);}
+  .iconbtn svg{width:18px;height:18px;}
+  .menu{position:relative;}
+  .menu-pop{
+    position:absolute;top:46px;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow-lg);overflow:hidden;display:none;min-width:200px;z-index:50;
+  }
+  .menu-pop.open{display:block;}
+  .menu-pop button{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:right;padding:11px 14px;
+    background:#fff;border:none;font-family:var(--font-body);font-size:14px;color:var(--ink);cursor:pointer;
+  }
+  .menu-pop button:hover{background:var(--paper-2);}
+  .menu-pop button svg{width:16px;height:16px;color:var(--ink-soft);}
+  .menu-pop .sep{height:1px;background:#eee4cf;margin:2px 0;}
+
+  /* ---------- Canvas ---------- */
+  #viewport{position:fixed;inset:62px 0 0 0;overflow:hidden;cursor:grab;touch-action:none;}
+  #viewport.grabbing{cursor:grabbing;}
+  #world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;}
+  #world.anim{transition:transform .45s cubic-bezier(.22,.61,.36,1);}
+  #links{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;}
+
+  .node{
+    position:absolute;background:linear-gradient(180deg,#fffefb,#fbf7ee);border-radius:16px;
+    box-shadow:0 4px 14px rgba(70,52,28,.10), 0 1px 0 rgba(255,255,255,.7) inset;cursor:pointer;overflow:hidden;
+    border:1px solid rgba(205,191,159,.6);
+    transition:transform .18s, box-shadow .18s, border-color .18s;
+    display:flex;align-items:center;gap:11px;padding:10px 13px;
+  }
+  .node::before{content:"";position:absolute;top:0;right:0;left:0;height:3px;background:var(--male);opacity:.85;}
+  .node.female::before{background:var(--female);}
+  .node:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(70,52,28,.18);border-color:var(--gold);}
+  .node.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(193,154,63,.3),0 12px 30px rgba(70,52,28,.18);}
+  .node .av{
+    width:44px;height:44px;border-radius:50%;flex:none;object-fit:cover;background:var(--male-soft);
+    display:grid;place-items:center;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(120,90,40,.18);
+  }
+  .node.female .av{background:var(--female-soft);}
+  .node .av img{width:100%;height:100%;object-fit:cover;}
+  .node .av svg{width:24px;height:24px;color:var(--male);opacity:.7;}
+  .node.female .av svg{color:var(--female);}
+  .node .meta{min-width:0;flex:1;}
+  .node .nm{font-family:var(--font-display);font-weight:700;font-size:16px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .node .sub{font-size:12px;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .node.deceased .av{filter:grayscale(.4);}
+
+  /* ---- daughters-of-founder accent (purple) ---- */
+  .node.royal-fem::before{background:var(--female);}
+  .node.royal-fem .av{background:var(--female-soft);}
+  .node.royal-fem .av svg{color:var(--female);}
+
+  /* ---- notable (sons of founder) ---- */
+  .node.notable{
+    border:1.5px solid #3e7d52;
+    background:linear-gradient(180deg,#eef6ef,#fffefb);
+    box-shadow:0 8px 24px rgba(45,92,59,.16);
+    padding:11px 13px;
+  }
+  .node.notable::before{height:5px;background:linear-gradient(90deg,#62ab7c,#3e7d52,#2c5c3b);}
+  .node.notable .av{background:linear-gradient(145deg,#d7ebda,#a9d3b4);border:1px solid #4e8c66;}
+  .node.notable .av svg{color:#2c5c3b;opacity:.9;}
+  .node.notable .nm{font-size:17px;}
+  .node.notable.female::before{background:linear-gradient(90deg,#d18f97,#b56a72);}
+  .node.notable.female .av{background:#f6e8e9;border-color:#cf8f97;}
+  .node.notable.female .av svg{color:#b56a72;}
+
+  /* ---- founder (Najran) — gold seal ---- */
+  .node.founder{
+    border:none;color:#5a3f12;padding:13px 18px;border-radius:18px;overflow:visible;
+    background:linear-gradient(180deg,#ffe9a8,#f4c64e 55%,#e0ad38);
+    box-shadow:0 0 0 3px #fff7e0, 0 12px 32px rgba(150,110,20,.32);
+  }
+  .node.founder::before{display:none;}
+  .node.founder::after{
+    content:"";position:absolute;inset:5px;border-radius:13px;
+    border:1.5px solid rgba(120,85,15,.4);pointer-events:none;
+  }
+  .node.founder .av{
+    width:52px;height:52px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 50% 35%,#fff6d8,#e8c463);
+    border:2px solid #b9892e;box-shadow:inset 0 2px 6px rgba(255,255,255,.6);
+  }
+  .node.founder .av svg{color:#9a6e1c;opacity:.95;}
+  .node.founder .nm{font-size:16px;color:#4a330d;white-space:normal;line-height:1.2;}
+  .node.founder .sub{color:#7c5a18;font-weight:700;}
+  .node.founder .crown{position:absolute;top:-12px;right:50%;transform:translateX(50%);
+    width:24px;height:24px;color:#a07f2c;filter:drop-shadow(0 2px 2px rgba(120,85,15,.4));}
+  .node.founder:hover{transform:translateY(-2px);box-shadow:0 0 0 3px #fff7e0,0 16px 40px rgba(150,110,20,.42);}
+
+  /* ---- ancestral lineage medallions (pill shaped) ---- */
+  .node.ancestor, .node.tribe{
+    border:none;border-radius:999px;color:#5a3f12;justify-content:center;padding:9px 20px;
+    background:linear-gradient(180deg,#fbf1d6,#efd9a0 60%,#e3c476);
+    box-shadow:0 4px 12px rgba(120,85,15,.18), inset 0 0 0 1.5px rgba(176,135,46,.55), inset 0 1px 0 rgba(255,252,240,.9);
+  }
+  .node.ancestor::before, .node.tribe::before, .node.ancestor::after, .node.tribe::after{display:none;}
+  .node.ancestor .av, .node.tribe .av{display:none;}
+  .node.ancestor .meta, .node.tribe .meta{flex:none;text-align:center;min-width:0;}
+  .node.ancestor .nm, .node.tribe .nm{font-family:var(--font-display);font-weight:700;font-size:16px;color:#4a330d;white-space:nowrap;}
+  .node.ancestor .sub, .node.tribe .sub{display:none;}
+  .node.tribe .nm{font-size:15px;}
+  .node.ancestor:hover, .node.tribe:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(120,85,15,.3), inset 0 0 0 1.5px rgba(176,135,46,.65), inset 0 1px 0 rgba(255,252,240,.9);}
+
+  /* ---- branch hub (people who have children) ---- */
+  .node.branch{
+    border:1.5px solid #4e8c66;
+    background:linear-gradient(180deg,#eef6ef,#fffefb);
+    box-shadow:0 7px 20px rgba(45,92,59,.15);
+  }
+  .node.branch::before{height:5px;background:linear-gradient(90deg,#62ab7c,#3e7d52,#2c5c3b);}
+  .node.branch .av{background:linear-gradient(145deg,#d7ebda,#a9d3b4);border:1px solid #4e8c66;}
+  .node.branch .av svg{color:#2c5c3b;opacity:.9;}
+  .node.branch .nm{font-size:16px;}
+
+  /* ---------- Zoom controls ---------- */
+  .zoom{position:fixed;bottom:22px;left:18px;z-index:35;display:flex;flex-direction:column;gap:8px;}
+  .zoom button{
+    width:42px;height:42px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink);
+    font-size:22px;cursor:pointer;box-shadow:var(--shadow);display:grid;place-items:center;transition:.15s;font-family:var(--font-body);
+  }
+  .zoom button:hover{background:var(--paper-2);border-color:var(--gold);}
+  .zoom button svg{width:18px;height:18px;}
+  .hint{position:fixed;bottom:26px;right:18px;z-index:35;font-size:12px;color:var(--ink-soft);background:rgba(255,253,248,.8);padding:7px 12px;border-radius:999px;border:1px solid rgba(205,191,159,.5);}
+
+  /* ---------- family dashboard ---------- */
+  .statbar{position:fixed;top:62px;left:0;right:0;z-index:30;display:flex;gap:8px;justify-content:center;
+    flex-wrap:nowrap;padding:9px 12px;pointer-events:none;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .statbar::-webkit-scrollbar{display:none;}
+  .stat{pointer-events:auto;display:flex;align-items:center;gap:9px;white-space:nowrap;
+    background:rgba(255,253,248,.92);backdrop-filter:blur(9px);border:1px solid rgba(205,191,159,.55);
+    border-radius:999px;padding:6px 15px 6px 7px;box-shadow:0 3px 12px rgba(70,52,28,.10);}
+  .stat .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff;}
+  .stat .ic svg{width:15px;height:15px;}
+  .stat .ic.g,.stat .ic.m,.stat .ic.f{background:linear-gradient(145deg,#8a6a3a,#5d4319);}
+  .stat .txt{display:flex;flex-direction:column;gap:2px;}
+  .stat .v{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--ink);line-height:1;}
+  .stat .l{font-size:10.5px;color:var(--ink-soft);line-height:1;}
+
+  /* ---------- Drawer ---------- */
+  #scrim{position:fixed;inset:0;background:rgba(43,38,32,.32);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.3s;z-index:60;}
+  #scrim.open{opacity:1;pointer-events:auto;}
+  #drawer{
+    position:fixed;top:0;bottom:0;right:0;width:380px;max-width:92vw;background:var(--paper);
+    z-index:70;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .34s cubic-bezier(.22,.61,.36,1);
+    display:flex;flex-direction:column;
+  }
+  #drawer.open{transform:translateX(0);}
+  .dhead{padding:22px 22px 16px;border-bottom:1px solid rgba(205,191,159,.5);position:relative;}
+  .dhead .closex{position:absolute;top:16px;left:16px;width:34px;height:34px;border-radius:9px;border:none;background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--ink-soft);box-shadow:var(--shadow);}
+  .dhead .closex:hover{color:var(--ink);}
+  .dphoto{
+    width:84px;height:84px;border-radius:18px;margin-bottom:12px;overflow:hidden;position:relative;cursor:pointer;
+    background:var(--male-soft);display:grid;place-items:center;box-shadow:var(--shadow);
+  }
+  .dphoto.female{background:var(--female-soft);}
+  .dphoto img{width:100%;height:100%;object-fit:cover;}
+  .dphoto svg{width:40px;height:40px;color:var(--male);opacity:.6;}
+  .dphoto.female svg{color:var(--female);}
+  .dphoto .cam{position:absolute;bottom:0;right:0;left:0;background:rgba(43,38,32,.6);color:#fff;font-size:10px;text-align:center;padding:3px 0;}
+  .dname{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--ink);}
+  .dsub{font-size:13px;color:var(--ink-soft);margin-top:3px;}
+  .dbody{flex:1;overflow-y:auto;padding:18px 22px 30px;}
+
+  .addrow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;}
+  .addbtn{
+    display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;border-radius:11px;cursor:pointer;
+    border:1px dashed var(--line);background:#fff;color:var(--ink);font-family:var(--font-body);font-size:13px;font-weight:500;transition:.15s;
+  }
+  .addbtn:hover{border-color:var(--gold);background:var(--paper-2);border-style:solid;}
+  .addbtn svg{width:15px;height:15px;color:var(--gold);}
+
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
+  .field input,.field select,.field textarea{
+    width:100%;font-family:var(--font-body);font-size:14px;color:var(--ink);padding:9px 11px;
+    border:1px solid var(--line);border-radius:9px;background:#fff;outline:none;transition:.15s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(193,154,63,.13);}
+  .field textarea{resize:vertical;min-height:60px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:8px;}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff;}
+  .seg label{flex:1;margin:0;text-align:center;}
+  .seg input{display:none;}
+  .seg span{display:block;padding:9px 4px;font-size:13px;cursor:pointer;color:var(--ink-soft);transition:.15s;}
+  .seg input:checked + span{background:var(--male);color:#fff;}
+  .seg.fem input:checked + span{background:var(--female);color:#fff;}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);cursor:pointer;margin:4px 0 13px;}
+  .check input{width:16px;height:16px;accent-color:var(--gold);}
+  .dactions{display:flex;gap:9px;margin-top:8px;}
+  .btn{flex:1;padding:11px;border-radius:10px;border:none;font-family:var(--font-body);font-weight:700;font-size:14px;cursor:pointer;transition:.15s;}
+  .btn-primary{background:var(--male);color:#fff;}
+  .btn-primary:hover{background:#2c5c3b;}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+  .btn-ghost:hover{background:var(--paper-2);}
+  .btn-danger{background:#fff;color:#b04a4a;border:1px solid #e6c4c4;flex:none;width:46px;display:grid;place-items:center;}
+  .btn-danger:hover{background:#fbeeee;}
+  .btn-danger svg{width:17px;height:17px;}
+  .relhint{font-size:12px;color:var(--ink-soft);margin:-8px 0 16px;line-height:1.6;}
+  .relhint b{color:var(--male);font-weight:700;}
+
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;z-index:90;
+    opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow-lg);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media(max-width:560px){
+    header{gap:8px;padding:0 12px;}
+    .crest{width:30px;height:30px;border-radius:9px;}
+    .crest svg{width:18px;height:18px;}
+    #title{font-size:16px;max-width:40vw;padding:3px 4px;}
+    .brandsub{display:none;}
+    #search{width:118px;max-width:34vw;padding:8px 30px 8px 10px;}
+    .searchwrap svg{right:9px;}
+    .iconbtn{width:34px;height:34px;}
+    .iconbtn svg{width:16px;height:16px;}
+    .hint{display:none;}
+    .statbar{justify-content:flex-start;padding:8px 10px;gap:6px;}
+    .stat{padding:5px 12px 5px 6px;gap:7px;}
+    .stat .ic{width:25px;height:25px;}
+    .stat .v{font-size:15px;}
+    .stat .l{font-size:10px;}
+    .zoom{bottom:16px;left:12px;}
+    .zoom button{width:38px;height:38px;font-size:20px;}
+    #drawer{width:100%;max-width:100%;}
+    .dbody{padding:16px 18px 28px;}
+    .dhead{padding:20px 18px 14px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <a class="crest" href="index.html" title="العودة إلى الصفحة الرئيسية" aria-label="العودة إلى الصفحة الرئيسية">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20" stroke-width="2.7"/><circle cx="6.6" cy="14.5" r="3.8" stroke-width="2.7"/><circle cx="17.4" cy="14.5" r="3.8" stroke-width="2.7"/></svg>
+    </a>
+    <div class="brandtxt">
+      <input id="title" value="شجرة أسرة النجران" spellcheck="false" aria-label="اسم العائلة">
+      <div class="brandsub">الكثيري من بني لام من طيّئ</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="searchwrap">
+    <input id="search" placeholder="ابحث عن شخص…" autocomplete="off">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <div class="sresults" id="sresults"></div>
+  </div>
+  <div class="menu">
+    <button class="iconbtn" id="menuBtn" title="الإعدادات" aria-label="القائمة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="menu-pop" id="menuPop">
+      <button id="addRootBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> إضافة شخص جديد</button>
+      <button id="fitBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M16 21h3a2 2 0 0 0 2-2v-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg> توسيط الشجرة</button>
+      <div class="sep"></div>
+      <button id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> تصدير (نسخة احتياطية)</button>
+      <button id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 8l5-5 5 5M12 3v12"/></svg> استيراد ملف</button>
+      <div class="sep"></div>
+      <button id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> مسح الكل والبدء من جديد</button>
+    </div>
+  </div>
+</header>
+
+<div class="statbar" id="statbar" aria-label="ملخص العائلة"></div>
+
+<div id="viewport">
+  <div id="world">
+    <svg id="links" xmlns="http://www.w3.org/2000/svg"></svg>
+    <!-- nodes injected here -->
+  </div>
+</div>
+
+<div class="zoom">
+  <button id="zin" aria-label="تكبير">+</button>
+  <button id="zout" aria-label="تصغير">−</button>
+  <button id="zfit" aria-label="توسيط"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M16 21h3a2 2 0 0 0 2-2v-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg></button>
+</div>
+<div class="hint">اسحب للتنقل • عجلة الفأرة للتكبير • انقر على شخص للتعديل</div>
+
+<!-- Drawer -->
+<div id="scrim"></div>
+<aside id="drawer" aria-label="بطاقة الشخص">
+  <div class="dhead">
+    <button class="closex" id="closeDrawer" aria-label="إغلاق">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dphoto" id="dphoto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <div class="cam">تغيير الصورة</div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" hidden>
+    <div class="dname" id="dname">—</div>
+    <div class="dsub" id="dsub"></div>
+  </div>
+  <div class="dbody">
+    <div class="addrow">
+      <button class="addbtn" data-rel="father"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg> إضافة والد</button>
+      <button class="addbtn" data-rel="spouse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> إضافة زوج/ة</button>
+      <button class="addbtn" data-rel="sibling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M5 7v10M19 7v10"/></svg> إضافة أخ/أخت</button>
+      <button class="addbtn" data-rel="child"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> إضافة ابن/ابنة</button>
+    </div>
+    <div class="relhint" id="relhint"></div>
+
+    <div class="field" style="background:var(--card);border:1px solid rgba(205,191,159,.5);border-radius:11px;padding:13px 13px 4px;">
+      <label style="font-family:var(--font-display);font-weight:700;color:var(--gold-d,#a07f2c);font-size:13px;">صلات القرابة</label>
+      <div style="margin-bottom:9px;"><label>الأب</label><select id="rel_father"></select></div>
+      <div><label>الأم</label><select id="rel_mother"></select></div>
+    </div>
+
+    <div class="field">
+      <label>الاسم الكامل</label>
+      <input id="f_full" placeholder="مثال: عبدالله محمد">
+    </div>
+    <div class="field">
+      <label>الاسم الظاهر في الشجرة</label>
+      <input id="f_display" placeholder="مثال: عبدالله">
+    </div>
+    <div class="field">
+      <label>الجنس</label>
+      <div class="seg" id="genderSeg">
+        <label><input type="radio" name="gender" value="male"><span>ذكر</span></label>
+        <label><input type="radio" name="gender" value="female"><span>أنثى</span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>تاريخ الميلاد</label>
+      <div class="row3">
+        <select id="b_day"></select>
+        <select id="b_month"></select>
+        <input id="b_year" placeholder="السنة" inputmode="numeric">
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="f_alive"> على قيد الحياة</label>
+    <div class="field" id="deathField">
+      <label>تاريخ الوفاة</label>
+      <div class="row3">
+        <select id="d_day"></select>
+        <select id="d_month"></select>
+        <input id="d_year" placeholder="السنة" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field"><label>مكان الميلاد</label><input id="f_bplace"></div>
+    <div class="field"><label>مكان الوفاة</label><input id="f_dplace"></div>
+    <div class="field"><label>المهنة</label><input id="f_job"></div>
+    <div class="field"><label>القطاع</label><input id="f_sector"></div>
+    <div class="field"><label>رقم الجوال</label><input id="f_mobile" inputmode="tel"></div>
+    <div class="field"><label>البريد الإلكتروني</label><input id="f_email" inputmode="email"></div>
+    <div class="field"><label>الموقع الإلكتروني</label><input id="f_web"></div>
+    <div class="field"><label>اهتمامات</label><input id="f_interests"></div>
+    <div class="field"><label>معلومات أخرى</label><textarea id="f_notes"></textarea></div>
+
+    <div class="dactions">
+      <button class="btn btn-primary" id="saveBtn">حفظ</button>
+      <button class="btn btn-danger" id="deleteBtn" title="حذف الشخص">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<input type="file" id="fileImport" accept="application/json,.json" hidden>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+(function(){
+  /* ============ constants / layout metrics ============ */
+  const NODE_W=156, NODE_H=68, SPOUSE_GAP=16, H_GAP=24, V_GAP=108, ROW_H=NODE_H+V_GAP;
+  const STORE_KEY='familyTree.v1';
+  const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+  /* ============ state ============ */
+  let data = prepareData(load() || sample());
+  let byId = {};
+  let selectedId = null;
+  let scale = 1, panX = 0, panY = 0;
+  const viewport = document.getElementById('viewport');
+  const world = document.getElementById('world');
+  const links = document.getElementById('links');
+
+  function index(){ byId={}; data.people.forEach(p=>byId[p.id]=p); }
+  index();
+
+  /* ============ persistence ============ */
+  function save(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); flashSaved(); }
+    catch(e){ toast('تعذّر الحفظ — قد تكون المساحة ممتلئة'); }
+  }
+  function load(){
+    try{ const r=localStorage.getItem(STORE_KEY); return r?JSON.parse(r):null; }
+    catch(e){ return null; }
+  }
+  let savedTimer;
+  function flashSaved(){}
+
+  function uid(){ return 'p'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3); }
+
+  function newPerson(o){
+    return Object.assign({
+      id:uid(), full:'', display:'', gender:'male', alive:true,
+      birth:{d:'',m:'',y:''}, death:{d:'',m:'',y:''},
+      bplace:'', dplace:'', job:'', sector:'', mobile:'', email:'', web:'', interests:'', notes:'',
+      photo:null, fatherId:null, motherId:null, spouseIds:[]
+    }, o||{});
+  }
+
+  /* ============ seed: Najran tree transcribed from the family poster ============ */
+  // Structure rule (from the poster): نجران ← gold seal;
+  //   orange flower = a son of نجران; green flower = his son (a "branch" hub);
+  //   green leaf = a son, pink leaf = a daughter (children of the green flower).
+  // Founder + ancestral line are verified. Some leaf-level links are a best-effort
+  // reading of overlapping branches — adjust any via «صلات القرابة».
+  function sample(){
+    const D={"title":"شجرة أسرة النجران","people":[{"id":"n1","full":"بصيّص","display":"بصيّص","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"الجد الأقدم في سلسلة النسب الظاهرة في الشجرة","photo":null,"fatherId":null,"motherId":null,"spouseIds":[],"rank":null},{"id":"n2","full":"عليّان بن بصيّص","display":"عليّان","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n1","motherId":null,"spouseIds":[],"rank":null},{"id":"n3","full":"بصيّص بن عليّان","display":"بصيّص","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n2","motherId":null,"spouseIds":[],"rank":null},{"id":"n4","full":"علي بن بصيّص","display":"علي","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n3","motherId":null,"spouseIds":[],"rank":null},{"id":"n5","full":"حسين (نجران) بن علي","display":"حسين (نجران)","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"مؤسس أسرة النجران — من آل مظهر، من الكثيري، من بني لام، من طيّئ.","photo":null,"fatherId":"n4","motherId":null,"spouseIds":[],"rank":"founder"},{"id":"n6","full":"راشد بن حسين","display":"راشد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"انقطع نسله من الذكور — رحمه الله.","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n7","full":"محمد بن حسين","display":"محمد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n8","full":"نايف بن حسين","display":"نايف","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n9","full":"علي بن حسين","display":"علي","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n10","full":"مرشد بن حسين","display":"مرشد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n11","full":"فهد بن حسين","display":"فهد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"notable"},{"id":"n12","full":"حسناء","display":"حسناء","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"royalfem"},{"id":"n13","full":"نورة","display":"نورة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"royalfem"},{"id":"n14","full":"رقية","display":"رقية","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n5","motherId":null,"spouseIds":[],"rank":"royalfem"},{"id":"n15","full":"حسين","display":"حسين","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n6","motherId":null,"spouseIds":[],"rank":null},{"id":"n16","full":"هند","display":"هند","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n17","full":"غيث","display":"غيث","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n18","full":"رقية","display":"رقية","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n6","motherId":null,"spouseIds":[],"rank":null},{"id":"n19","full":"مزنة الراشد","display":"مزنة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n6","motherId":null,"spouseIds":[],"rank":null},{"id":"n20","full":"حسين","display":"حسين","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n21","full":"محمد","display":"محمد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n22","full":"عبدالله","display":"عبدالله","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n23","full":"عبدالله","display":"عبدالله","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n24","full":"عدي","display":"عدي","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n23","motherId":null,"spouseIds":[],"rank":null},{"id":"n25","full":"زياد","display":"زياد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n26","full":"فاطمة","display":"فاطمة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n27","full":"نورة","display":"نورة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n28","full":"حصة","display":"حصة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n29","full":"أمجاد","display":"أمجاد","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n30","full":"نشوى","display":"نشوى","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n31","full":"خديجة","display":"خديجة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n7","motherId":null,"spouseIds":[],"rank":null},{"id":"n32","full":"لين","display":"لين","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n20","motherId":null,"spouseIds":[],"rank":null},{"id":"n33","full":"مشعل","display":"مشعل","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n34","full":"خالد","display":"خالد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n23","motherId":null,"spouseIds":[],"rank":null},{"id":"n35","full":"طلال","display":"طلال","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n23","motherId":null,"spouseIds":[],"rank":null},{"id":"n36","full":"فواز نايف الكثيري","display":"فواز","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n37","full":"سعود","display":"سعود","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n38","full":"مازن","display":"مازن","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n39","full":"ياسر","display":"ياسر","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n40","full":"فهد","display":"فهد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n41","full":"فيصل","display":"فيصل","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n42","full":"ريّان","display":"ريّان","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n43","full":"نجاح","display":"نجاح","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n44","full":"عواطف","display":"عواطف","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":["n90"],"rank":null},{"id":"n45","full":"نعيمة","display":"نعيمة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n46","full":"عزيزة","display":"عزيزة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n47","full":"تغريد","display":"تغريد","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n48","full":"إيمان","display":"إيمان","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n49","full":"فاطمة","display":"فاطمة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n50","full":"طيف","display":"طيف","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n51","full":"مها","display":"مها","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[],"rank":null},{"id":"n52","full":"فواز","display":"فواز","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"جامع شجرة الأسرة وأهداها: فواز بن علي بن حسين الكثيري.","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n53","full":"حسين","display":"حسين","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n54","full":"صالح","display":"صالح","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[],"rank":null},{"id":"n55","full":"نايف","display":"نايف","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n56","full":"سلمان","display":"سلمان","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n57","full":"سطام","display":"سطام","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n52","motherId":null,"spouseIds":[],"rank":null},{"id":"n58","full":"عساف","display":"عساف","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n52","motherId":null,"spouseIds":[],"rank":null},{"id":"n59","full":"فايز","display":"فايز","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n60","full":"تركي","display":"تركي","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n56","motherId":null,"spouseIds":[],"rank":null},{"id":"n61","full":"مشاري","display":"مشاري","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n56","motherId":null,"spouseIds":[],"rank":null},{"id":"n62","full":"علي","display":"علي","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n56","motherId":null,"spouseIds":[],"rank":null},{"id":"n63","full":"أوس","display":"أوس","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n73","motherId":null,"spouseIds":[],"rank":null},{"id":"n64","full":"مالك","display":"مالك","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n73","motherId":null,"spouseIds":[],"rank":null},{"id":"n65","full":"جاسر","display":"جاسر","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n52","motherId":null,"spouseIds":[],"rank":null},{"id":"n66","full":"أفراح","display":"أفراح","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n67","full":"تفهي","display":"تفهي","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n68","full":"منيرة","display":"منيرة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n69","full":"بدرية","display":"بدرية","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n70","full":"نوف","display":"نوف","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n71","full":"شعيع","display":"شعيع","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":null},{"id":"n72","full":"خزامى","display":"خزامى","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n52","motherId":null,"spouseIds":[],"rank":null},{"id":"n73","full":"محمد","display":"محمد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n74","full":"طلال","display":"طلال","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[],"rank":null},{"id":"n75","full":"فيصل","display":"فيصل","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[],"rank":null},{"id":"n76","full":"محمد","display":"محمد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n77","full":"يوسف","display":"يوسف","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n76","motherId":null,"spouseIds":[],"rank":null},{"id":"n78","full":"نايف","display":"نايف","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n76","motherId":null,"spouseIds":[],"rank":null},{"id":"n79","full":"سيف","display":"سيف","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n76","motherId":null,"spouseIds":[],"rank":null},{"id":"n80","full":"جوان","display":"جوان","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n83","motherId":null,"spouseIds":[],"rank":null},{"id":"n81","full":"نوف","display":"نوف","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n76","motherId":null,"spouseIds":[],"rank":null},{"id":"n82","full":"سحاب","display":"سحاب","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n83","motherId":null,"spouseIds":[],"rank":null},{"id":"n83","full":"أحمد","display":"أحمد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n84","full":"تولين","display":"تولين","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n83","motherId":null,"spouseIds":[],"rank":null},{"id":"n85","full":"يبان","display":"يبان","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":null},{"id":"n86","full":"نورة","display":"نورة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":null},{"id":"n87","full":"منيفة","display":"منيفة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":null},{"id":"n88","full":"شروق","display":"شروق","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":null},{"id":"n89","full":"نوف","display":"نوف","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n10","motherId":null,"spouseIds":[],"rank":null},{"id":"n90","full":"طلال","display":"طلال","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":"data:image/jpeg;base64,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","fatherId":"n11","motherId":null,"spouseIds":["n44"],"rank":"branch"},{"id":"n91","full":"الوليد","display":"الوليد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":"data:image/jpeg;base64,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","fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n92","full":"عبدالله","display":"عبدالله","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":"data:image/jpeg;base64,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","fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n93","full":"أحمد","display":"أحمد","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"ضابط","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":"data:image/jpeg;base64,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","fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n94","full":"فهد طلال الكثيري","display":"فهد","gender":"male","alive":true,"birth":{"d":"23","m":"12","y":""},"death":{"d":"","m":"","y":""},"bplace":"ضرية","dplace":"","job":"مستشار","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":"data:image/jpeg;base64,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","fatherId":"n90","motherId":"n44","spouseIds":[],"rank":null},{"id":"n95","full":"شمس","display":"شمس","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n96","full":"آرام","display":"آرام","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n97","full":"ملاك","display":"ملاك","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n90","motherId":null,"spouseIds":[],"rank":null},{"id":"n98","full":"صخر","display":"صخر","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n99","full":"فهد","display":"فهد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n98","motherId":null,"spouseIds":[],"rank":null},{"id":"n100","full":"فيصل فهد","display":"فيصل","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":"branch"},{"id":"n101","full":"فهد","display":"فهد","gender":"male","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n100","motherId":null,"spouseIds":[],"rank":null},{"id":"n102","full":"خزامى","display":"خزامى","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n100","motherId":null,"spouseIds":[],"rank":null},{"id":"n103","full":"أميرة","display":"أميرة","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n100","motherId":null,"spouseIds":[],"rank":null},{"id":"n104","full":"رغد فيصل","display":"رغد","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n100","motherId":null,"spouseIds":[],"rank":null},{"id":"n105","full":"فيروز","display":"فيروز","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":null},{"id":"n106","full":"أريج","display":"أريج","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":null},{"id":"n107","full":"ردعة","display":"ردعة","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":null},{"id":"n108","full":"ليلى","display":"ليلى","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n11","motherId":null,"spouseIds":[],"rank":null},{"id":"n109","full":"أفنان","display":"أفنان","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[],"rank":null},{"id":"n110","full":"رؤى","display":"رؤى","gender":"female","alive":false,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[],"rank":null},{"id":"pt0pjp5w6v8","full":"نايف فواز العلي","display":"نايف","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n52","motherId":null,"spouseIds":[]},{"id":"pjjxazgvpy7","full":"لمى نايف","display":"لمى","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[]},{"id":"pcbxyu8bgmp","full":"مشاري نايف","display":"مشاري","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"طبيب","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n8","motherId":null,"spouseIds":[]},{"id":"po5ma3ymxlc","full":"نايف فواز","display":"نايف","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n36","motherId":null,"spouseIds":[]},{"id":"phvf4fmvaz9","full":"رسين فواز","display":"رسين","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n36","motherId":null,"spouseIds":[]},{"id":"pzwvdzj5j2g","full":"لين نايف","display":"لين","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[]},{"id":"p2708z2ym1t","full":"معاذ نايف الكثيري","display":"معاذ","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[]},{"id":"pzntx7a2ppy","full":"راكان نايف","display":"راكان","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n55","motherId":null,"spouseIds":[]},{"id":"p26lxt9r6h4","full":"فهد العلي","display":"فهد","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n9","motherId":null,"spouseIds":[]},{"id":"pp1ioqqdn46","full":"TBD","display":"TBD","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n33","motherId":null,"spouseIds":[]},{"id":"paxg0shxxs9","full":"سيف","display":"سيف","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n73","motherId":null,"spouseIds":[]},{"id":"pus3cs1uoil","full":"علي حسين العلي","display":"علي","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[]},{"id":"p7imewoqr0i","full":"نايف حسين العلي","display":"نايف","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[]},{"id":"ple97r7xsyy","full":"عبير","display":"عبير","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[]},{"id":"pn9gplc117n","full":"نورة","display":"نورة","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[]},{"id":"pjce0meno68","full":"يارا","display":"يارا","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"n53","motherId":null,"spouseIds":[]},{"id":"pm1md3r08q6","full":"محمد","display":"محمد","gender":"male","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"pus3cs1uoil","motherId":null,"spouseIds":[]},{"id":"pynli61k3ua","full":"ريم","display":"ريم","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]},{"id":"pzxbsi4v7sp","full":"مها","display":"مها","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]},{"id":"p2ltrc9s9lo","full":"سارة","display":"سارة","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]},{"id":"p5w4our5bj7","full":"نوف","display":"نوف","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]},{"id":"p6x8fxe0dcp","full":"جوري","display":"جوري","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]},{"id":"p7zk0yraf48","full":"عبير","display":"عبير","gender":"female","alive":true,"birth":{"d":"","m":"","y":""},"death":{"d":"","m":"","y":""},"bplace":"","dplace":"","job":"","sector":"","mobile":"","email":"","web":"","interests":"","notes":"","photo":null,"fatherId":"p26lxt9r6h4","motherId":null,"spouseIds":[]}]};
+    return D;
+  }
+
+  // Ensure the ancestral spine + tribal trunk + founder ranks always exist,
+  // whether data came fresh or from a saved copy. Idempotent.
+  function prepareData(D){
+    if(!D||!D.people) return D;
+    var bid={}; D.people.forEach(function(x){bid[x.id]=x;});
+    var founder=D.people.find(function(x){return x.rank==='founder';});
+    if(!founder) return D;
+    // tag named forefathers above the founder
+    var cur=bid[founder.fatherId];
+    while(cur){ if(cur.rank!=='founder'&&cur.rank!=='tribe') cur.rank='ancestor'; cur=bid[cur.fatherId]; }
+    // add the tribal/origin trunk once (skip if already present)
+    var hasTribe=D.people.some(function(x){return x.rank==='tribe';});
+    if(!hasTribe){
+      var top=founder; while(top&&bid[top.fatherId]) top=bid[top.fatherId];
+      var tribe=[['طيّئ','قبيلة طيّئ','من كهلان من قحطان'],
+                 ['بني لام','بني لام','من طيّئ'],
+                 ['الكثيري','الكثيري (آل كثير)','من بني لام'],
+                 ['آل مظهر','آل مظهر','من الكثيري']];
+      var prev=null;
+      tribe.forEach(function(t,i){ var id='origin'+i;
+        D.people.push({id:id,full:t[1],display:t[0],gender:'male',alive:false,birth:{},death:{},bplace:'',dplace:'',job:'',sector:'',mobile:'',email:'',web:'',interests:'',notes:t[2],photo:null,fatherId:prev,motherId:null,spouseIds:[],rank:'tribe'});
+        prev=id; });
+      if(top) top.fatherId=prev;
+    }
+    return D;
+  }
+
+  /* ============ relationship helpers ============ */
+  function owningParentId(p){
+    if(p.fatherId && byId[p.fatherId]) return p.fatherId;
+    if(p.motherId && byId[p.motherId]) return p.motherId;
+    return null;
+  }
+  function childrenOf(p){
+    return data.people.filter(c=>owningParentId(c)===p.id)
+      .sort((a,b)=>{
+        const ga=a.gender==='female'?1:0, gb=b.gender==='female'?1:0;
+        if(ga!==gb) return ga-gb;                       // males first → placed on the right
+        return (+(a.birth.y||9999))-(+(b.birth.y||9999));
+      });
+  }
+  function hasKids(p){ return data.people.some(c=>owningParentId(c)===p.id); }
+  function isMarriedIn(p){
+    if(owningParentId(p)!==null) return false;
+    for(const sid of (p.spouseIds||[])){
+      const s=byId[sid]; if(!s) continue;
+      if(owningParentId(s)!==null) return true;          // married into spouse's lineage
+    }
+    for(const sid of (p.spouseIds||[])){
+      const s=byId[sid]; if(!s) continue;
+      if(p.gender==='female' && s.gender==='male') return true;  // founder couple: female attaches
+      if(p.gender===s.gender && p.id>sid) return true;           // tie-break
+    }
+    return false;
+  }
+  function unitMembers(p){
+    const sp=(p.spouseIds||[]).map(id=>byId[id]).filter(s=>s && isMarriedIn(s));
+    return [p, ...sp];
+  }
+  function roots(){
+    return data.people.filter(p=>owningParentId(p)===null && !isMarriedIn(p))
+      .sort((a,b)=>(+(a.birth.y||9999))-(+(b.birth.y||9999)));
+  }
+
+  /* ============ layout (vertical, gender-split, leaf-stacking) ============ */
+  let pos={}, plan={};
+  const LEAF_STEP=NODE_H+16, COL_GAP=18, SUB_GAP=26, SPINE_GAP=22;
+
+  function measureGroup(arr){
+    const branches=arr.filter(hasKids);
+    const leaves=arr.filter(k=>!hasKids(k));
+    let brW=0,brH=0;
+    branches.forEach((b,i)=>{ const m=measure(b); if(i)brW+=SUB_GAP; brW+=m.w; brH=Math.max(brH,m.h); });
+    const leafColW=leaves.length?NODE_W:0;
+    const leafH=leaves.length?((leaves.length-1)*LEAF_STEP+NODE_H):0;
+    const w=brW+((branches.length&&leaves.length)?COL_GAP:0)+leafColW;
+    const h=Math.max(brH,leafH);
+    return {branches,leaves,w,h,leafColW};
+  }
+  function measure(p){
+    if(plan[p.id]) return plan[p.id];
+    const kids=childrenOf(p);
+    const males=kids.filter(k=>k.gender!=='female');
+    const females=kids.filter(k=>k.gender==='female');
+    const M=measureGroup(males), F=measureGroup(females);
+    const childrenW=F.w+M.w+((F.w&&M.w)?COL_GAP*2:0);
+    const w=Math.max(NODE_W,childrenW);
+    const h=NODE_H+(kids.length?(V_GAP+Math.max(M.h,F.h)):0);
+    return plan[p.id]={w,h,M,F};
+  }
+  function placeGroup(g,startX,y,leafFirst){
+    let cur=startX;
+    const doLeaves=()=>{ if(!g.leaves.length)return; const colX=cur;
+      g.leaves.forEach((k,i)=>pos[k.id]={x:colX,y:y+i*LEAF_STEP}); cur+=g.leafColW; };
+    const doBranches=()=>{ g.branches.forEach((b,i)=>{ if(i)cur+=SUB_GAP; place(b,cur,y); cur+=measure(b).w; }); };
+    if(leafFirst){ doLeaves(); if(g.leaves.length&&g.branches.length)cur+=COL_GAP; doBranches(); }
+    else { doBranches(); if(g.leaves.length&&g.branches.length)cur+=COL_GAP; doLeaves(); }
+  }
+  function place(p,leftX,y){
+    const pl=measure(p);
+    pos[p.id]={x:leftX+(pl.w-NODE_W)/2, y};
+    const childrenW=pl.F.w+pl.M.w+((pl.F.w&&pl.M.w)?COL_GAP*2:0);
+    if(childrenW<=0) return;
+    let cur=leftX+(pl.w-childrenW)/2;
+    const spine = (p.rank==='tribe'||p.rank==='ancestor');   // lineage trunk → tight spacing
+    const childY=y+NODE_H+(spine?SPINE_GAP:V_GAP);
+    placeGroup(pl.F,cur,childY,true);                       // females on the left (leaf column outermost)
+    cur+=pl.F.w+((pl.F.w&&pl.M.w)?COL_GAP*2:0);
+    placeGroup(pl.M,cur,childY,false);                      // males on the right (leaf column outermost)
+  }
+  function layout(){
+    plan={}; pos={};
+    const rs=roots();
+    let cur=0,maxR=0,maxB=0;
+    rs.forEach(r=>{ const m=measure(r); place(r,cur,0); cur+=m.w+SUB_GAP*2; });
+    data.people.forEach(p=>{ if(!pos[p.id]){ pos[p.id]={x:cur,y:0}; cur+=NODE_W+SUB_GAP; } });
+    Object.values(pos).forEach(pt=>{ maxR=Math.max(maxR,pt.x+NODE_W); maxB=Math.max(maxB,pt.y+NODE_H); });
+    return {width:maxR+60,height:maxB+60};
+  }
+
+  /* ============ rendering ============ */
+  const avatarSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+
+  function lifespan(p){
+    const b=p.birth.y||'', d=p.death.y||'';
+    if(b&&d) return b+' – '+d;
+    if(!p.alive && d) return 'تـ '+d;
+    if(b) return 'و '+b;
+    return p.job||'';
+  }
+
+  function render(){
+    index();
+    const dim=layout();
+    world.style.width=dim.width+'px';
+    world.style.height=dim.height+'px';
+    links.setAttribute('width',dim.width);
+    links.setAttribute('height',dim.height);
+    links.setAttribute('viewBox','0 0 '+dim.width+' '+dim.height);
+
+    // connectors
+    let paths='';
+    data.people.forEach(p=>{
+      const pl=plan[p.id]; if(!pl) return;
+      if(p.rank==='tribe'||p.rank==='ancestor') return;     // trunk graphic shows the lineage continuity
+      const kids=childrenOf(p); if(!kids.length) return;
+      const pc=pos[p.id]; const cX=pc.x+NODE_W/2, cY=pc.y+NODE_H;
+      const childY=pc.y+NODE_H+V_GAP, busY=cY+V_GAP/2;
+      const anchors=[];   // x positions of each child column / branch root
+      const drops=[];     // {x, y2} vertical from busY down
+      [pl.F,pl.M].forEach(g=>{
+        g.branches.forEach(b=>{ const x=pos[b.id].x+NODE_W/2; anchors.push(x); drops.push({x,y2:childY}); });
+        if(g.leaves.length){ const x=pos[g.leaves[0].id].x+NODE_W/2;
+          const lastY=pos[g.leaves[g.leaves.length-1].id].y+NODE_H/2;
+          anchors.push(x); drops.push({x,y2:lastY}); }
+      });
+      if(!anchors.length) return;
+      const minX=Math.min(...anchors), maxX=Math.max(...anchors);
+      paths+=line(cX,cY,cX,busY);                 // parent stem
+      if(maxX>minX) paths+=line(minX,busY,maxX,busY); // horizontal bus
+      drops.forEach(d=>paths+=line(d.x,busY,d.x,d.y2)); // drops (leaf columns extend through the stack)
+    });
+
+    // --- slim gold lineage cord linking the ancestral medallions down to the founder ---
+    const FOUNDER_W=270;
+    let cord='';
+    const founder=data.people.find(p=>p.rank==='founder');
+    const spineNodes=data.people.filter(p=>(p.rank==='tribe'||p.rank==='ancestor')&&pos[p.id]);
+    spineNodes.forEach(p=>{
+      const kid=childrenOf(p)[0];
+      if(!kid||!pos[kid.id]) return;
+      const x=pos[p.id].x+NODE_W/2;
+      const y1=pos[p.id].y+NODE_H, y2=pos[kid.id].y;
+      cord+='<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="rgba(193,154,63,.20)" stroke-width="9" stroke-linecap="round"/>';
+      cord+='<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="url(#cord)" stroke-width="3" stroke-linecap="round"/>';
+    });
+    const defs='<defs><linearGradient id="cord" x1="0" y1="0" x2="0" y2="1">'
+      +'<stop offset="0" stop-color="#d9ba63"/><stop offset="1" stop-color="#b58e2f"/></linearGradient></defs>';
+    links.innerHTML=defs+cord+paths;
+
+    // nodes
+    [...world.querySelectorAll('.node')].forEach(n=>n.remove());
+    const tribeIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5l8-2 8 2v16"/><path d="M4 9h16M4 14h16M12 3v18"/></svg>';
+    data.people.forEach(p=>{
+      const pt=pos[p.id]; if(!pt) return;
+      const el=document.createElement('div');
+      const fem=p.gender==='female';
+      let tier;
+      if(p.rank==='founder') tier=' founder';
+      else if(p.rank==='tribe') tier=' tribe';
+      else if(p.rank==='ancestor') tier=' ancestor';
+      else if(p.rank==='notable') tier=' notable'+(fem?' female':'');
+      else if(p.rank==='royalfem') tier=' female royal-fem notable';
+      else if(hasKids(p)) tier=' branch';                 // anyone with children → green flower
+      else tier=(fem?' female':'');
+      el.className='node'+tier+(p.id===selectedId?' selected':'')+(!p.alive?' deceased':'');
+      const w = p.rank==='founder' ? FOUNDER_W : NODE_W;
+      el.style.width=w+'px'; el.style.height=NODE_H+'px';
+      el.style.left=(pt.x-(w-NODE_W)/2)+'px'; el.style.top=pt.y+'px';   // keep centered on layout slot
+      el.dataset.id=p.id;
+      const av = p.rank==='tribe' ? tribeIcon : (p.photo ? '<img src="'+p.photo+'" alt="">' : avatarSVG);
+      const crown = p.rank==='founder' ? '<svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14l1-9-4 3-4-6-4 6-4-3z"/></svg>' : '';
+      const nameTxt = p.rank==='founder' ? (p.full||p.display) : (p.display||p.full||'بدون اسم');
+      const subTxt = p.rank==='founder' ? 'مؤسس أسرة النجران'
+                   : p.rank==='tribe' ? (p.notes||'')
+                   : p.rank==='ancestor' ? 'من الجدود' : lifespan(p);
+      el.innerHTML=crown+'<div class="av">'+av+'</div><div class="meta"><div class="nm">'+esc(nameTxt)+'</div><div class="sub">'+esc(subTxt)+'</div></div>';
+      world.appendChild(el);
+    });
+    applyTransform();
+    renderStats();
+  }
+  function renderStats(){
+    const bar=document.getElementById('statbar'); if(!bar) return;
+    const fam=data.people.filter(p=>p.rank!=='tribe'&&p.rank!=='ancestor');
+    const total=fam.length;
+    const males=fam.filter(p=>p.gender==='male').length;
+    const females=fam.filter(p=>p.gender==='female').length;
+    let gens=0;
+    const founder=data.people.find(p=>p.rank==='founder');
+    if(founder){
+      let frontier=[founder], seen=new Set([founder.id]);
+      while(frontier.length){ gens++; const next=[];
+        frontier.forEach(p=>childrenOf(p).forEach(c=>{ if(!seen.has(c.id)){seen.add(c.id); next.push(c);} }));
+        frontier=next;
+      }
+    }
+    const ic={
+      people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>',
+      male:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="M14.5 9.5 20 4M15 4h5v5"/></svg>',
+      female:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M12 15v6M9 18h6"/></svg>',
+      gens:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 8l9 4 9-4-9-4z"/><path d="M3 14l9 4 9-4"/></svg>'
+    };
+    const chips=[
+      [ic.people,'g',total,'إجمالي الأفراد'],
+      [ic.male,'m',males,'ذكور'],
+      [ic.female,'f',females,'إناث'],
+      [ic.gens,'g',gens,'الأجيال']
+    ];
+    bar.innerHTML=chips.map(c=>'<div class="stat"><div class="ic '+c[1]+'">'+c[0]+'</div><div class="txt"><div class="v">'+c[2]+'</div><div class="l">'+c[3]+'</div></div></div>').join('');
+  }
+  function line(x1,y1,x2,y2){
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#cbb583" stroke-width="1.6" stroke-linecap="round"/>';
+  }
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  /* ============ pan / zoom ============ */
+  function applyTransform(){ world.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')'; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+  function fit(animate){
+    const dim={w:world.offsetWidth,h:world.offsetHeight};
+    const vw=viewport.clientWidth, vh=viewport.clientHeight;
+    const k=clamp(Math.min(vw/(dim.w+60), vh/(dim.h+60)), .2, 1);
+    scale=k;
+    panX=(vw-dim.w*k)/2;
+    panY=Math.max(24,(vh-dim.h*k)/2);
+    if(animate){ world.classList.add('anim'); setTimeout(()=>world.classList.remove('anim'),460); }
+    applyTransform();
+  }
+  function zoomAt(cx,cy,factor){
+    const ns=clamp(scale*factor,.2,2.4);
+    const wx=(cx-panX)/scale, wy=(cy-panY)/scale;
+    scale=ns; panX=cx-wx*scale; panY=cy-wy*scale; applyTransform();
+  }
+  // wheel
+  viewport.addEventListener('wheel',e=>{ e.preventDefault();
+    const r=viewport.getBoundingClientRect();
+    zoomAt(e.clientX-r.left,e.clientY-r.top, e.deltaY<0?1.12:1/1.12);
+  },{passive:false});
+  // drag (pointer)
+  let dragging=false,sx=0,sy=0,spx=0,spy=0,moved=false;
+  viewport.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.node')) return;
+    dragging=true;moved=false;sx=e.clientX;sy=e.clientY;spx=panX;spy=panY;
+    viewport.classList.add('grabbing'); viewport.setPointerCapture(e.pointerId);
+  });
+  viewport.addEventListener('pointermove',e=>{
+    if(!dragging)return; panX=spx+(e.clientX-sx); panY=spy+(e.clientY-sy);
+    if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>4)moved=true; applyTransform();
+  });
+  function endDrag(){ dragging=false; viewport.classList.remove('grabbing'); }
+  viewport.addEventListener('pointerup',endDrag);
+  viewport.addEventListener('pointercancel',endDrag);
+  // pinch
+  let pinch=null;
+  viewport.addEventListener('touchstart',e=>{ if(e.touches.length===2){ dragging=false; pinch=touchInfo(e); } },{passive:false});
+  viewport.addEventListener('touchmove',e=>{
+    if(e.touches.length===2&&pinch){ e.preventDefault();
+      const t=touchInfo(e); const f=t.dist/pinch.dist;
+      const r=viewport.getBoundingClientRect();
+      zoomAt(t.cx-r.left,t.cy-r.top,f); pinch=t;
+    }
+  },{passive:false});
+  viewport.addEventListener('touchend',e=>{ if(e.touches.length<2)pinch=null; });
+  function touchInfo(e){ const a=e.touches[0],b=e.touches[1];
+    return {dist:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),cx:(a.clientX+b.clientX)/2,cy:(a.clientY+b.clientY)/2}; }
+
+  // node click
+  world.addEventListener('click',e=>{ const n=e.target.closest('.node'); if(n&&!moved) openDrawer(n.dataset.id); });
+  document.getElementById('zin').onclick=()=>zoomAt(viewport.clientWidth/2,viewport.clientHeight/2,1.2);
+  document.getElementById('zout').onclick=()=>zoomAt(viewport.clientWidth/2,viewport.clientHeight/2,1/1.2);
+  document.getElementById('zfit').onclick=()=>fit(true);
+
+  /* ============ drawer / form ============ */
+  const drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  function $(id){return document.getElementById(id);}
+  // populate date selects
+  (function(){
+    const days=['']; for(let i=1;i<=31;i++)days.push(String(i).padStart(2,'0'));
+    [['b_day','اليوم'],['d_day','اليوم']].forEach(([id])=>{ const s=$(id);
+      s.innerHTML='<option value="">اليوم</option>'+days.slice(1).map(d=>'<option>'+d+'</option>').join(''); });
+    [['b_month'],['d_month']].forEach(([id])=>{ const s=$(id);
+      s.innerHTML='<option value="">الشهر</option>'+MONTHS.map((m,i)=>'<option value="'+(i+1)+'">'+m+'</option>').join(''); });
+  })();
+
+  function openDrawer(id){
+    selectedId=id; const p=byId[id]; if(!p)return;
+    render();
+    refreshHeader(p);
+    $('f_full').value=p.full||''; $('f_display').value=p.display||'';
+    document.querySelectorAll('input[name=gender]').forEach(r=>r.checked=(r.value===p.gender));
+    document.getElementById('genderSeg').classList.toggle('fem',p.gender==='female');
+    $('b_day').value=p.birth.d||''; $('b_month').value=p.birth.m||''; $('b_year').value=p.birth.y||'';
+    $('d_day').value=p.death.d||''; $('d_month').value=p.death.m||''; $('d_year').value=p.death.y||'';
+    $('f_alive').checked=!!p.alive; toggleDeath();
+    $('f_bplace').value=p.bplace||''; $('f_dplace').value=p.dplace||'';
+    $('f_job').value=p.job||''; $('f_sector').value=p.sector||'';
+    $('f_mobile').value=p.mobile||''; $('f_email').value=p.email||''; $('f_web').value=p.web||'';
+    $('f_interests').value=p.interests||''; $('f_notes').value=p.notes||'';
+    $('relhint').innerHTML='';
+    populateRelations(p);
+    scrim.classList.add('open'); drawer.classList.add('open');
+  }
+  function refreshHeader(p){
+    $('dname').textContent=p.display||p.full||'بدون اسم';
+    const rel=relationSummary(p);
+    $('dsub').textContent=rel;
+    const ph=$('dphoto'); ph.classList.toggle('female',p.gender==='female');
+    ph.querySelector('img')&&ph.querySelector('img').remove();
+    if(p.photo){ const img=new Image(); img.src=p.photo; ph.insertBefore(img,ph.firstChild); }
+  }
+  function relationSummary(p){
+    const parts=[];
+    const f=p.fatherId&&byId[p.fatherId]; const m=p.motherId&&byId[p.motherId];
+    if(f)parts.push('ابن'+(p.gender==='female'?'ة':'')+' '+(f.display||f.full));
+    const kids=data.people.filter(c=>c.fatherId===p.id||c.motherId===p.id);
+    if(kids.length)parts.push(kids.length+' من الأبناء');
+    return parts.join(' • ');
+  }
+  function closeDrawer(){ scrim.classList.remove('open'); drawer.classList.remove('open'); selectedId=null; render(); }
+  $('closeDrawer').onclick=closeDrawer; scrim.onclick=closeDrawer;
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeDrawer(); });
+
+  // gender segment styling
+  document.getElementById('genderSeg').addEventListener('change',e=>{
+    document.getElementById('genderSeg').classList.toggle('fem',e.target.value==='female');
+  });
+  $('f_alive').addEventListener('change',toggleDeath);
+  function toggleDeath(){ $('deathField').style.display=$('f_alive').checked?'none':'block'; }
+
+  // ---- change-parent (relations) ----
+  function descendantsOf(id){
+    const set=new Set(); const stack=[id];
+    while(stack.length){ const cur=stack.pop();
+      data.people.forEach(c=>{ if((c.fatherId===cur||c.motherId===cur)&&!set.has(c.id)){ set.add(c.id); stack.push(c.id); } });
+    }
+    return set;
+  }
+  function populateRelations(p){
+    const banned=descendantsOf(p.id); banned.add(p.id);
+    const males=data.people.filter(x=>!banned.has(x.id) && x.gender==='male');
+    const females=data.people.filter(x=>!banned.has(x.id) && x.gender==='female');
+    const opt=(x,sel)=>'<option value="'+x.id+'"'+(sel?' selected':'')+'>'+esc(x.display||x.full||'بدون اسم')+'</option>';
+    $('rel_father').innerHTML='<option value="">— بدون —</option>'+males.map(x=>opt(x,x.id===p.fatherId)).join('');
+    $('rel_mother').innerHTML='<option value="">— بدون —</option>'+females.map(x=>opt(x,x.id===p.motherId)).join('');
+  }
+  $('rel_father').addEventListener('change',e=>{ const p=byId[selectedId]; if(!p)return;
+    p.fatherId=e.target.value||null; save(); refreshHeader(p); render(); toast('تم تحديث الأب'); });
+  $('rel_mother').addEventListener('change',e=>{ const p=byId[selectedId]; if(!p)return;
+    p.motherId=e.target.value||null;
+    // keep parents linked as spouses for tidy layout
+    if(p.fatherId&&p.motherId){ const f=byId[p.fatherId],m=byId[p.motherId];
+      if(f&&m){ f.spouseIds=f.spouseIds||[]; m.spouseIds=m.spouseIds||[];
+        if(!f.spouseIds.includes(m.id))f.spouseIds.push(m.id);
+        if(!m.spouseIds.includes(f.id))m.spouseIds.push(f.id); } }
+    save(); refreshHeader(p); render(); toast('تم تحديث الأم'); });
+
+  // photo
+  $('dphoto').onclick=()=>$('photoInput').click();
+  $('photoInput').onchange=e=>{ const file=e.target.files[0]; if(!file)return;
+    const rd=new FileReader(); rd.onload=()=>{ resizeImg(rd.result,256,d=>{ byId[selectedId].photo=d; refreshHeader(byId[selectedId]); save(); render(); }); };
+    rd.readAsDataURL(file); e.target.value='';
+  };
+  function resizeImg(src,max,cb){
+    const img=new Image(); img.onload=()=>{ let{width:w,height:h}=img; const r=Math.min(max/w,max/h,1);
+      const c=document.createElement('canvas'); c.width=w*r; c.height=h*r;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); cb(c.toDataURL('image/jpeg',.82)); };
+    img.src=src;
+  }
+
+  // save
+  $('saveBtn').onclick=()=>{ const p=byId[selectedId]; if(!p)return;
+    p.full=$('f_full').value.trim(); p.display=$('f_display').value.trim()|| (p.full.split(' ')[0]||'');
+    p.gender=(document.querySelector('input[name=gender]:checked')||{}).value||'male';
+    p.birth={d:$('b_day').value,m:$('b_month').value,y:$('b_year').value.trim()};
+    p.alive=$('f_alive').checked;
+    p.death=p.alive?{d:'',m:'',y:''}:{d:$('d_day').value,m:$('d_month').value,y:$('d_year').value.trim()};
+    p.bplace=$('f_bplace').value.trim(); p.dplace=$('f_dplace').value.trim();
+    p.job=$('f_job').value.trim(); p.sector=$('f_sector').value.trim();
+    p.mobile=$('f_mobile').value.trim(); p.email=$('f_email').value.trim(); p.web=$('f_web').value.trim();
+    p.interests=$('f_interests').value.trim(); p.notes=$('f_notes').value.trim();
+    save(); refreshHeader(p); render(); toast('تم الحفظ');
+  };
+
+  // delete
+  $('deleteBtn').onclick=()=>{ const p=byId[selectedId]; if(!p)return;
+    if(data.people.length<=1){ toast('لا يمكن حذف آخر شخص'); return; }
+    if(!confirm('حذف "'+(p.display||p.full)+'" من الشجرة؟'))return;
+    data.people=data.people.filter(x=>x.id!==p.id);
+    data.people.forEach(x=>{ if(x.fatherId===p.id)x.fatherId=null; if(x.motherId===p.id)x.motherId=null;
+      x.spouseIds=(x.spouseIds||[]).filter(s=>s!==p.id); });
+    save(); closeDrawer(); render();
+  };
+
+  // add relatives
+  document.querySelectorAll('.addbtn').forEach(b=>b.onclick=()=>addRelative(b.dataset.rel));
+  function addRelative(rel){
+    const p=byId[selectedId]; if(!p)return; index();
+    let np, msg='';
+    if(rel==='father'){
+      if(p.fatherId&&byId[p.fatherId]){ toast('الوالد مُسجّل بالفعل'); return; }
+      np=newPerson({gender:'male',display:'والد'});
+      p.fatherId=np.id;
+      // attach existing siblings (same mother) too? keep simple: only this person.
+      msg='أُضيف <b>الوالد</b> — عدّل بياناته. لإضافة الأم: افتح الوالد ثم «إضافة زوج/ة».';
+    } else if(rel==='spouse'){
+      np=newPerson({gender:p.gender==='male'?'female':'male',display:'زوج'+(p.gender==='male'?'ة':'')});
+      p.spouseIds=p.spouseIds||[]; p.spouseIds.push(np.id);
+      np.spouseIds=[p.id];
+      msg='أُضيف <b>الزوج/ة</b>. الأبناء المضافون لاحقاً سيظهرون أسفل الزوجين.';
+    } else if(rel==='sibling'){
+      np=newPerson({gender:'male',display:'أخ',fatherId:p.fatherId||null,motherId:p.motherId||null});
+      if(!p.fatherId&&!p.motherId) msg='ملاحظة: لا يوجد والد لهذا الشخص، فظهر الأخ كشخص مستقل. أضِف الوالد أولاً لربطهما.';
+      else msg='أُضيف <b>أخ/أخت</b> بنفس الوالدين.';
+    } else { // child
+      np=newPerson({gender:'male',display:'ابن',fatherId:p.gender==='male'?p.id:firstSpouse(p),motherId:p.gender==='female'?p.id:firstSpouse(p)});
+      msg='أُضيف <b>ابن/ابنة</b>.';
+    }
+    data.people.push(np); save(); openDrawer(np.id); $('relhint').innerHTML=msg;
+    // bring focus field
+    setTimeout(()=>{ $('f_full').focus(); },50);
+  }
+  function firstSpouse(p){ const s=(p.spouseIds||[]).find(id=>byId[id]); return s||null; }
+
+  /* ============ menu / search / io ============ */
+  const menuPop=$('menuPop');
+  $('menuBtn').onclick=e=>{ e.stopPropagation(); menuPop.classList.toggle('open'); };
+  document.addEventListener('click',()=>menuPop.classList.remove('open'));
+  $('addRootBtn').onclick=()=>{ const np=newPerson({display:'شخص جديد'}); data.people.push(np); save(); render(); openDrawer(np.id); };
+  $('fitBtn').onclick=()=>fit(true);
+  $('resetBtn').onclick=()=>{ if(confirm('سيتم حذف كامل الشجرة الحالية والبدء بشخص واحد. هل أنت متأكد؟')){
+    data={title:$('title').value||'شجرة عائلتي',people:[newPerson({display:'أنا'})]}; save(); render(); fit(); } };
+
+  $('exportBtn').onclick=()=>{ data.title=$('title').value;
+    const json=JSON.stringify(data,null,2);
+    const fname=(data.title||'family-tree').replace(/\s+/g,'-')+'.json';
+    // try a normal download (works in most browsers)
+    try{
+      const blob=new Blob([json],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=fname;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }catch(_){}
+    // always show a copy fallback (reliable even when downloads are blocked)
+    showExportModal(json,fname);
+  };
+  function showExportModal(json,fname){
+    let ov=document.getElementById('exportOverlay');
+    if(ov)ov.remove();
+    ov=document.createElement('div'); ov.id='exportOverlay';
+    ov.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(43,38,32,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px;';
+    const box=document.createElement('div');
+    box.style.cssText='background:var(--paper);border-radius:16px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);padding:22px;';
+    box.innerHTML='<div style="font-family:var(--font-display);font-weight:700;font-size:19px;margin-bottom:6px;">نسخة احتياطية للشجرة</div>'+
+      '<div style="font-size:13px;color:var(--ink-soft);line-height:1.7;margin-bottom:12px;">إن لم يبدأ التنزيل تلقائياً، انسخ النص بالكامل واحفظه في ملف باسم <b>'+esc(fname)+'</b> (أو أرسله لي لأحدّث الشجرة).</div>';
+    const ta=document.createElement('textarea');
+    ta.value=json; ta.readOnly=true;
+    ta.style.cssText='width:100%;flex:1;min-height:230px;font-family:monospace;font-size:12px;line-height:1.5;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;resize:vertical;direction:ltr;text-align:left;';
+    box.appendChild(ta);
+    const row=document.createElement('div'); row.style.cssText='display:flex;gap:9px;margin-top:14px;';
+    const copy=document.createElement('button'); copy.className='btn btn-primary'; copy.style.flex='1'; copy.textContent='نسخ النص';
+    copy.onclick=async()=>{ ta.select(); ta.setSelectionRange(0,json.length);
+      try{ await navigator.clipboard.writeText(json); }catch(_){ try{document.execCommand('copy');}catch(__){} }
+      copy.textContent='تم النسخ ✓'; setTimeout(()=>copy.textContent='نسخ النص',1500); };
+    const close=document.createElement('button'); close.className='btn btn-ghost'; close.textContent='إغلاق';
+    close.onclick=()=>ov.remove();
+    row.appendChild(copy); row.appendChild(close); box.appendChild(row);
+    ov.appendChild(box); ov.addEventListener('click',e=>{ if(e.target===ov)ov.remove(); });
+    document.body.appendChild(ov); ta.focus(); ta.select();
+    toast('تم تجهيز النسخة الاحتياطية');
+  }
+  $('importBtn').onclick=()=>$('fileImport').click();
+  $('fileImport').onchange=e=>{ const f=e.target.files[0]; if(!f)return;
+    const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result);
+      if(!d.people||!Array.isArray(d.people)) throw 0;
+      data=d; $('title').value=data.title||'شجرة عائلتي'; save(); render(); fit(true); toast('تم الاستيراد');
+    }catch(_){ toast('ملف غير صالح'); } }; rd.readAsText(f); e.target.value='';
+  };
+
+  // title
+  $('title').value=data.title||'شجرة عائلتي';
+  $('title').addEventListener('input',()=>{ data.title=$('title').value; save(); });
+
+  // search
+  const sres=$('sresults');
+  $('search').addEventListener('input',e=>{ const q=e.target.value.trim();
+    if(!q){ sres.classList.remove('open'); return; }
+    const hits=data.people.filter(p=>((p.full||'')+' '+(p.display||'')).includes(q)).slice(0,8);
+    if(!hits.length){ sres.classList.remove('open'); return; }
+    sres.innerHTML=hits.map(p=>'<button data-id="'+p.id+'">'+esc(p.display||p.full)+(p.full&&p.full!==p.display?' <span style="color:#9a9081;font-size:12px">'+esc(p.full)+'</span>':'')+'</button>').join('');
+    sres.classList.add('open');
+  });
+  sres.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return;
+    sres.classList.remove('open'); $('search').value=''; focusPerson(b.dataset.id); });
+  function focusPerson(id){ const pt=pos[id]; if(!pt){render();} const p=pos[id]; if(!p)return;
+    const cx=p.x+NODE_W/2; scale=Math.max(scale,.9);
+    panX=viewport.clientWidth/2-cx*scale; panY=viewport.clientHeight/2-(p.y+NODE_H/2)*scale;
+    world.classList.add('anim'); applyTransform(); setTimeout(()=>world.classList.remove('anim'),460);
+    openDrawer(id);
+  }
+
+  /* ============ toast ============ */
+  let tt; const toastEl=$('toast');
+  function toast(m){ toastEl.textContent=m; toastEl.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>toastEl.classList.remove('show'),1900); }
+
+  /* ============ boot ============ */
+  render();
+  fit();
+  window.addEventListener('resize',()=>applyTransform());
+})();
+</script>
+</body>
+</html>
