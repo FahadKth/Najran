@@ -276,6 +276,33 @@
     .treepromo{padding:38px 24px;}
     .gal-grid{columns:2 150px;}
   }
+  @media(max-width:560px){
+    .wrap{padding:0 16px;}
+    .page{padding:96px 0 60px;}
+    .page-head{margin-bottom:28px;}
+    h2.sec{font-size:clamp(26px,8vw,36px);}
+    .lead{font-size:16px;line-height:1.85;}
+    .hero{min-height:90vh;padding-top:64px;}
+    .hero-name{margin-bottom:32px;}
+    .logo{font-size:clamp(56px,21vw,94px);}
+    .hero-name .pre{font-size:17px;letter-spacing:1px;margin-bottom:-2px;}
+    .hpills{gap:10px;width:100%;max-width:330px;}
+    .hpill{flex:1 1 100%;justify-content:center;padding:14px 18px;font-size:16px;border-radius:14px;}
+    .hpill::after{display:none;}
+    .scrolldown{display:none;}
+    .floatmark{display:none;}
+    .orb{filter:blur(34px);opacity:.42;}
+    .orb.o1{width:230px;height:230px;}.orb.o2{width:210px;height:210px;}
+    .orb.o3{width:190px;height:190px;}.orb.o4{width:150px;height:150px;}
+    .qgrid{margin-top:24px;}
+    .qcard{padding:22px;}
+    .news-grid{grid-template-columns:1fr;}
+    .panel{padding:22px;}
+    .factbox{padding:20px;}
+    .treepromo{padding:30px 20px;}
+    .fgrid{flex-direction:column;text-align:center;gap:14px;}
+    .mbox{padding:22px;border-radius:14px;}
+  }
 </style>
 </head>
 <body>
@@ -283,7 +310,7 @@
 <header id="hdr">
   <div class="wrap nav">
     <div class="brand" data-go="home">
-      <div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></div>
+      <div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20" stroke-width="2.7"/><circle cx="6.6" cy="14.5" r="3.8" stroke-width="2.7"/><circle cx="17.4" cy="14.5" r="3.8" stroke-width="2.7"/></svg></div>
       <div><b id="brandName">النجران</b><span>الموقع الرسمي للعائلة</span></div>
     </div>
     <div class="navspacer"></div>
@@ -307,9 +334,6 @@
         <span class="orb o1"></span><span class="orb o2"></span>
         <span class="orb o3"></span><span class="orb o4"></span>
       </div>
-      <span class="floatmark f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></span>
-      <span class="floatmark f2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></span>
-      <span class="floatmark f3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></span>
       <div class="arabesque"></div>
       <div class="wrap hero-inner">
         <div class="hero-name">
@@ -317,9 +341,9 @@
           <h1 class="logo" id="heroName">النجران</h1>
         </div>
         <div class="hpills">
-          <button class="hpill" data-go="about"><svg class="rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.1 4.7.7-3.4 3.3.8 4.7L12 17.4 7.5 14.8l.8-4.7L4.9 6.8l4.7-.7z" opacity=".9"/><circle cx="12" cy="12" r="2.4" fill="#fff"/></svg> نبذة</button>
-          <button class="hpill" data-go="tree"><svg class="rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.1 4.7.7-3.4 3.3.8 4.7L12 17.4 7.5 14.8l.8-4.7L4.9 6.8l4.7-.7z" opacity=".9"/><circle cx="12" cy="12" r="2.4" fill="#fff"/></svg> شجرة العائلة</button>
-          <button class="hpill" data-go="news"><svg class="rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 4.1 4.7.7-3.4 3.3.8 4.7L12 17.4 7.5 14.8l.8-4.7L4.9 6.8l4.7-.7z" opacity=".9"/><circle cx="12" cy="12" r="2.4" fill="#fff"/></svg> الأخبار</button>
+          <button class="hpill" data-go="about"><svg class="rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18.5 19 4.5"/><path d="M19 18.5 5 4.5"/><path d="M5.2 15.7 7.8 18.3"/><path d="M18.8 15.7 16.2 18.3"/><circle cx="4.6" cy="19.1" r=".95" fill="currentColor" stroke="none"/><circle cx="19.4" cy="19.1" r=".95" fill="currentColor" stroke="none"/></svg> نبذة</button>
+          <button class="hpill" data-go="tree"><svg class="rose" viewBox="0 0 24 24" fill="currentColor"><path d="M5.5 21.5h13a.8.8 0 0 0 .8-.8v-1.2H4.7v1.2a.8.8 0 0 0 .8.8z"/><path d="M13 2.5c-.5 0-.8.5-.6 1 .2.4.1.9-.2 1.2L9.5 7.6 8.8 6.2c-.2-.5-.9-.6-1.3-.2L5.2 8.2c-.7.7-.8 1.7-.3 2.5.4.6 1.2.8 1.9.5l.9-.4-.5 1c-.7 1.5-.4 3.2.8 4.3l.9.8c-1.2 1-1.9 2.4-1.9 4h11.4c.7-2 1.1-4 1.1-6.5 0-5-2.7-8.9-6.5-9.5a1 1 0 0 0-.5 0z"/></svg> شجرة العائلة</button>
+          <button class="hpill" data-go="news"><svg class="rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18.5 19 4.5"/><path d="M19 18.5 5 4.5"/><path d="M5.2 15.7 7.8 18.3"/><path d="M18.8 15.7 16.2 18.3"/><circle cx="4.6" cy="19.1" r=".95" fill="currentColor" stroke="none"/><circle cx="19.4" cy="19.1" r=".95" fill="currentColor" stroke="none"/></svg> الأخبار</button>
         </div>
       </div>
       <div class="scrolldown"><span>تصفّح الأقسام</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></div>
@@ -331,7 +355,7 @@
         <h2 class="sec">كل ما يخصّ العائلة</h2>
         <div class="qgrid">
           <div class="qcard" data-go="about"><div class="qicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><h3>نبذة وتاريخ</h3><p>أصل العائلة ونشأتها وأبرز محطاتها عبر الأجيال.</p></div>
-          <div class="qcard" data-go="tree"><div class="qicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></div><h3>شجرة العائلة</h3><p>شجرة تفاعلية تربط الآباء والأبناء مع بطاقة لكل فرد.</p></div>
+          <div class="qcard" data-go="tree"><div class="qicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20" stroke-width="2.7"/><circle cx="6.6" cy="14.5" r="3.8" stroke-width="2.7"/><circle cx="17.4" cy="14.5" r="3.8" stroke-width="2.7"/></svg></div><h3>شجرة العائلة</h3><p>شجرة تفاعلية تربط الآباء والأبناء مع بطاقة لكل فرد.</p></div>
           <div class="qcard" data-go="news"><div class="qicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9h4"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg></div><h3>الأخبار</h3><p>مناسبات العائلة وأخبارها وإعلاناتها أولاً بأول.</p></div>
         </div>
       </div>
@@ -405,7 +429,7 @@
   </div>
   <div class="wrap">
     <div class="fgrid">
-      <div class="fbrand"><div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h17"/><circle cx="6.8" cy="14.2" r="4"/><circle cx="17.2" cy="14.2" r="4"/><path d="M9.6 11 8 12.6"/><path d="M14.4 11 16 12.6"/></svg></div><b id="footName">عائلة النجران</b></div>
+      <div class="fbrand"><div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20" stroke-width="2.7"/><circle cx="6.6" cy="14.5" r="3.8" stroke-width="2.7"/><circle cx="17.4" cy="14.5" r="3.8" stroke-width="2.7"/></svg></div><b id="footName">عائلة النجران</b></div>
       <div class="socials" id="socialsFoot"></div>
     </div>
     <div class="fcopy">© <span id="year"></span> عائلة النجران — جميع الحقوق محفوظة.</div>
