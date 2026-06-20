@@ -73,15 +73,17 @@
   .logo{
     font-family:var(--fd);font-weight:700;margin:0;line-height:1;
     font-size:clamp(64px,14vw,150px);
-    background:linear-gradient(110deg,#a87f28 0%,#c19a3f 30%,#ffeebf 47%,#fff8e6 50%,#ffeebf 53%,#c19a3f 70%,#936a1f 100%);
-    background-size:250% 100%;
+    background:
+      linear-gradient(110deg, rgba(250,235,185,0) 36%, rgba(250,235,185,.62) 50%, rgba(250,235,185,0) 64%),
+      linear-gradient(180deg,#e7c576 0%,#cda246 42%,#b58a2e 100%);
+    background-size:230% 100%, 100% 100%;
+    background-repeat:no-repeat;
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent;
-    text-shadow:0 3px 7px rgba(120,85,15,.20);
-    will-change:background-position;
-    animation:riseIn 1s .15s cubic-bezier(.22,.61,.36,1) both, shine 7s ease-in-out 1s infinite;
+    text-shadow:0 2px 3px rgba(120,85,15,.16);
+    animation:riseIn 1s .15s cubic-bezier(.22,.61,.36,1) both, shine 8s linear 1.4s infinite;
   }
-  @keyframes shine{0%{background-position:165% 0;}50%{background-position:-65% 0;}100%{background-position:165% 0;}}
+  @keyframes shine{0%{background-position:220% 0, 0 0;}100%{background-position:-130% 0, 0 0;}}
   .hpills{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
   .hpill{position:relative;display:inline-flex;align-items:center;gap:11px;cursor:pointer;
     padding:15px 30px 15px 26px;border-radius:18px;font-family:var(--fd);font-weight:700;
@@ -131,7 +133,7 @@
 
   @media (prefers-reduced-motion:reduce){
     .orb,.floatmark,.scrolldown svg{animation:none;}
-    .hero-name .pre,.logo,.hpill,.scrolldown{animation:none;}
+    .hero-name .pre,.hpill,.scrolldown{animation:none;}
     .reveal{transition:none;opacity:1;transform:none;}
   }
   .cta{display:flex;gap:13px;flex-wrap:wrap;justify-content:center;}
@@ -409,7 +411,6 @@
         <p>اسحب للتنقّل، استخدم عجلة الفأرة للتكبير، وانقر على أي شخص لتعديل بياناته أو إضافة والد أو زوج أو أبناء.</p>
         <a class="btn btn-primary" href="family-tree.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg> فتح شجرة العائلة</a>
       </div>
-      
     </div>
   </section>
 
@@ -477,9 +478,9 @@
   function defaults(){return {
     family:'النجران',
     tagline:'صفحة تجمع تاريخ العائلة وشجرتها وأخبارها وصورها في مكانٍ واحد — لنحفظ الصلة بين الأجيال ونوثّق إرث من سبقونا.',
-    about:'أسرة النجران من آل مظهر،
+    about:'أسرة النجران من آل مظهر، من الكثيري (آل كثير)، من بني لام، من قبيلة طيّئ.\n\nسلسلة النسب كما هي مثبتة في شجرة الأسرة:\nحسين (نجران) بن علي بن بصيّص بن عليّان بن بصيّص — من آل مظهر — من الكثيري — من بني لام — من طيّئ.\n\nنبذة عن الكثيري وبني لام:\nبنو لام قبيلة عربية عريقة من طيّئ من كهلان، سكنوا جبلَي طيّئ (أجأ وسلمى) ثم نزحوا إلى نجد، ويتفرّع منهم: الظفير والفضول وآل كثير وآل مغيرة. وكان لبني لام نفوذ واسع في نجد امتدّ نحو أربعة قرون، وبلغت ديارهم من الجبلين غرباً حتى قرب المدينة المنورة في القرنين السابع والثامن الهجريين، حتى عدّها بعض المؤرخين من أكبر القبائل التي سادت نجد في تلك الحقبة.\n\nوآل كثير (ويُنسب الفرد إليهم بـ«الكثيري») من أشهر بطون بني لام الطائية، اشتهروا بقوّتهم ومنعتهم في نجد — لا سيما في منطقة العارض — وكانت لهم مناهل ومراعٍ معروفة، وتذكر كتب التاريخ وقائعهم وأخبارهم منذ القرن الثامن الهجري. وينتشر آل كثير اليوم في عدد من مناطق المملكة العربية السعودية وفي الكويت.\n\nمن أخبار الأسرة:\nيُذكر في تاريخ الأسرة أنّ الجدّ حسين (نجران) كان أميراً على ضرية — وضرية بلدة تاريخية معروفة في نجد، اشتهرت قديماً بحِماها (حمى ضرية) وموقعها على طرق الحُجّاج والقوافل.\n\nانتشار الأسرة اليوم:\nتنتشر أسرة النجران في عددٍ من المدن، منها: ضريّة والرياض والدمام ومكة المكرمة والمدينة المنورة.\n\nوسم الأسرة:\nشعار الموقع هو «وسم آل مظهر من الكثران» — وسم الإبل القديم الذي كانت تُوسم به إبل الأسرة وممتلكاتها.',
     email:'family@example.com',
-    socials:{instagram:'',twitter:'',telegram:'',snapchat:'',faceb من الكثيري (آل كثير)، من بني لام، من قبيلة طيّئ.\n\nسلسلة النسب كما هي مثبتة في شجرة الأسرة:\nحسين (نجران) بن علي بن بصيّص بن عليّان بن بصيّص — من آل مظهر — من الكثيري — من بني لام — من طيّئ.\n\nنبذة عن الكثيري وبني لام:\nبنو لام قبيلة عربية عريقة من طيّئ من كهلان، سكنوا جبلَي طيّئ (أجأ وسلمى) ثم نزحوا إلى نجد، ويتفرّع منهم: الظفير والفضول وآل كثير وآل مغيرة. وكان لبني لام نفوذ واسع في نجد امتدّ نحو أربعة قرون، وبلغت ديارهم من الجبلين غرباً حتى قرب المدينة المنورة في القرنين السابع والثامن الهجريين، حتى عدّها بعض المؤرخين من أكبر القبائل التي سادت نجد في تلك الحقبة.\n\nوآل كثير (ويُنسب الفرد إليهم بـ«الكثيري») من أشهر بطون بني لام الطائية، اشتهروا بقوّتهم ومنعتهم في نجد — لا سيما في منطقة العارض — وكانت لهم مناهل ومراعٍ معروفة، وتذكر كتب التاريخ وقائعهم وأخبارهم منذ القرن الثامن الهجري. وينتشر آل كثير اليوم في عدد من مناطق المملكة العربية السعودية وفي الكويت.\n\nمن أخبار الأسرة:\nيُذكر في تاريخ الأسرة أنّ الجدّ حسين (نجران) كان أميراً على ضرية — وضرية بلدة تاريخية معروفة في نجد، اشتهرت قديماً بحِماها (حمى ضرية) وموقعها على طرق الحُجّاج والقوافل.\n\nانتشار الأسرة اليوم:\nتنتشر أسرة النجران في عددٍ من المدن، منها: ضريّة والرياض والدمام ومكة المكرمة والمدينة المنورة.\n\nوسم الأسرة:\nشعار الموقع هو «وسم آل مظهر من الكثران» — وسم الإبل القديم الذي كانت تُوسم به إبل الأسرة وممتلكاتها.\n\nعن هذه الشجرة:\nجمعها وأعدّها وأهداها: فواز بن علي بن حسين الكثيري. الطبعة الأولى، بتاريخ 4 / 4 / 1444هـ الموافق 29 / 10 / 2022م، ويتم تحديثها سنوياً بإذن الله.\n\n(هذا النص قابل للتعديل — فعّل وضع «تحرير» من الزر أسفل الصفحة لإضافة المزيد.)',ook:'',youtube:''},
+    socials:{instagram:'',twitter:'',telegram:'',snapchat:'',facebook:'',youtube:''},
     news:[
       {id:'n1',title:'إطلاق موقع العائلة',date:'1446هـ',body:'تم بحمد الله إطلاق الموقع الرسمي للعائلة ليجمع الشجرة والأخبار والصور. (خبر تجريبي — يمكنك تعديله أو حذفه.)',img:null},
       {id:'n2',title:'لقاء العائلة السنوي',date:'قريباً',body:'يسرّ اللجنة دعوتكم لحضور اللقاء السنوي. التفاصيل لاحقاً بإذن الله.',img:null}
@@ -487,6 +488,10 @@
     gallery:[]
   };}
   let S = load() || defaults();
+  // migrate older saved copies: drop the editing note + dedication block
+  if(S && typeof S.about==='string'){
+    S.about = S.about.split('عن هذه الشجرة')[0].replace(/\s+$/,'');
+  }
   function load(){ try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;} }
   function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('تعذّر الحفظ');} }
   function uid(){return 'x'+Math.random().toString(36).slice(2,8);}
