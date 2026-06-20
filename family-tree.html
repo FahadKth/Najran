@@ -313,6 +313,19 @@
     .dbody{padding:16px 18px 28px;}
     .dhead{padding:20px 18px 14px;}
   }
+  /* read-only (non-admin) mode: hide all editing controls */
+  .dphoto .cam{display:none;}
+  body.viewer #menuBtn{display:none;}
+  body.viewer .addrow,
+  body.viewer #reledit,
+  body.viewer .dactions,
+  body.viewer .relhint{display:none;}
+  body.viewer #drawer input:disabled,
+  body.viewer #drawer textarea:disabled,
+  body.viewer #drawer select:disabled{
+    background:#faf7f0;color:var(--ink);-webkit-text-fill-color:var(--ink);
+    cursor:default;opacity:1;border-color:rgba(205,191,159,.45);}
+  body.viewer .dphoto{cursor:default;}
 </style>
 </head>
 <body>
@@ -389,7 +402,7 @@
     </div>
     <div class="relhint" id="relhint"></div>
 
-    <div class="field" style="background:var(--card);border:1px solid rgba(205,191,159,.5);border-radius:11px;padding:13px 13px 4px;">
+    <div class="field" id="reledit" style="background:var(--card);border:1px solid rgba(205,191,159,.5);border-radius:11px;padding:13px 13px 4px;">
       <label style="font-family:var(--font-display);font-weight:700;color:var(--gold-d,#a07f2c);font-size:13px;">صلات القرابة</label>
       <div style="margin-bottom:9px;"><label>الأب</label><select id="rel_father"></select></div>
       <div><label>الأم</label><select id="rel_mother"></select></div>
@@ -468,6 +481,28 @@
 
   function index(){ byId={}; data.people.forEach(p=>byId[p.id]=p); }
   index();
+
+  /* ============ admin / read-only gating ============ */
+  // Change this secret to whatever you like. To edit, open the tree with
+  //   family-tree.html?admin=najran-admin   (it's remembered on that device).
+  // To return to view-only on a device:  family-tree.html?admin=logout
+  const ADMIN_PASS='najran-admin';
+  let isAdmin=false;
+  (function(){
+    try{
+      const q=new URLSearchParams(location.search);
+      if(q.get('admin')===ADMIN_PASS){ localStorage.setItem('najran.admin','1'); history.replaceState(null,'',location.pathname); }
+      else if(q.get('admin')==='logout'){ localStorage.removeItem('najran.admin'); history.replaceState(null,'',location.pathname); }
+      isAdmin = localStorage.getItem('najran.admin')==='1';
+    }catch(e){ isAdmin=false; }
+    document.body.classList.toggle('viewer', !isAdmin);
+    if(!isAdmin){
+      const dr=document.getElementById('drawer');
+      if(dr) dr.querySelectorAll('input,select,textarea').forEach(el=>{ el.disabled=true; });
+      const h=document.querySelector('.hint');
+      if(h) h.textContent='اسحب للتنقل • عجلة الفأرة للتكبير • انقر على شخص لعرض التفاصيل';
+    }
+  })();
 
   /* ============ persistence ============ */
   function save(){
